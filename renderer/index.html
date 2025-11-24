@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ping Monitor</title>
+    <script src="https://unpkg.com/smoothie"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="header">
+        <div id="header-left">
+            <div id="title">Ping Monitor</div>
+        </div>
+        <div id="header-right">
+            <button id="startBtn">Start</button>
+        </div>
+    </div>
+
+    <div id="stats">
+        <div class="box">Current<br><span id="current">0 ms</span></div>
+        <div class="box">Avg<br><span id="avg">0 ms</span></div>
+        <div class="box">Min<br><span id="min">0 ms</span></div>
+        <div class="box">Max<br><span id="max">0 ms</span></div>
+        <div class="box">Jitter<br><span id="jitter">0 ms</span></div>
+        <div class="box">Loss<br><span id="loss">0%</span></div>
+    </div>
+
+    <canvas id="chart"></canvas>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
