@@ -1,36 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="black">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Ping Monitor</title>
-    <script src="https://unpkg.com/smoothie"></script>
-    <link rel="stylesheet" href="style.css">
+    <!-- Tailwind + daisyUI -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    <!-- uPlot -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.30/dist/uPlot.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/uplot@1.6.30/dist/uPlot.iife.min.js"></script>
+    <!-- App -->
+    <script defer src="app.js"></script>
 </head>
 
-<body>
+<body class="w-[1280px] h-[900px] overflow-hidden bg-neutral-950 text-neutral-200 select-none">
+    <header
+        class="h-16 w-full px-6 flex items-center justify-between border-b border-neutral-800 bg-neutral-900/80 backdrop-blur">
+        <div class="text-xl font-semibold tracking-wide">Ping Monitor</div>
 
-    <div id="header">
-        <div id="header-left">
-            <div id="title">Ping Monitor</div>
+        <div class="flex gap-3">
+            <button id="startBtn"
+                class="px-4 py-1.5 text-sm rounded-full bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 transition">
+                Start
+            </button>
+
+            <button onclick="speedTest_modal.showModal()"
+                class="px-4 py-1.5 text-sm rounded-full bg-neutral-800 border border-neutral-700 hover:bg-neutral-700 transition">
+                Speedtest
+            </button>
         </div>
-        <div id="header-right">
-            <button id="startBtn">Start</button>
+    </header>
+
+    <section class="h-[90px] px-5 flex gap-3 items-center bg-neutral-900 border-b border-neutral-800">
+        <div class="flex-1 p-3 rounded-xl bg-neutral-800 border border-neutral-700 text-center">
+            Current <br><span id="current" class="text-lg font-semibold text-white">0 ms</span>
         </div>
-    </div>
+        <div class="flex-1 p-3 rounded-xl bg-neutral-800 border border-neutral-700 text-center">
+            Avg <br><span id="avg" class="text-lg font-semibold text-white">0 ms</span>
+        </div>
+        <div class="flex-1 p-3 rounded-xl bg-neutral-800 border border-neutral-700 text-center">
+            Min <br><span id="min" class="text-lg font-semibold text-white">0 ms</span>
+        </div>
+        <div class="flex-1 p-3 rounded-xl bg-neutral-800 border border-neutral-700 text-center">
+            Max <br><span id="max" class="text-lg font-semibold text-white">0 ms</span>
+        </div>
+        <div class="flex-1 p-3 rounded-xl bg-neutral-800 border border-neutral-700 text-center">
+            Jitter <br><span id="jitter" class="text-lg font-semibold text-white">0 ms</span>
+        </div>
+        <div class="flex-1 p-3 rounded-xl bg-neutral-800 border border-neutral-700 text-center">
+            Loss <br><span id="loss" class="text-lg font-semibold text-white">0%</span>
+        </div>
+    </section>
 
-    <div id="stats">
-        <div class="box">Current<br><span id="current">0 ms</span></div>
-        <div class="box">Avg<br><span id="avg">0 ms</span></div>
-        <div class="box">Min<br><span id="min">0 ms</span></div>
-        <div class="box">Max<br><span id="max">0 ms</span></div>
-        <div class="box">Jitter<br><span id="jitter">0 ms</span></div>
-        <div class="box">Loss<br><span id="loss">0%</span></div>
-    </div>
+    <dialog id="speedTest_modal" class="modal">
+        <div class="modal-box bg-neutral-900 text-neutral-200 border border-neutral-700 rounded-xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
 
-    <canvas id="chart"></canvas>
+            <h3 class="text-xl font-semibold mb-4">Speed-Test</h3>
 
-    <script src="app.js"></script>
+            <div id="speedStatus" class="text-center text-neutral-400 text-sm mb-4"></div>
+
+            <div id="speedLoader" class="flex justify-center mb-6 hidden">
+                <span class="loading loading-ring loading-lg"></span>
+            </div>
+
+            <button id="speedStartBtn" class="btn btn-primary w-full mb-4" onclick="startSpeedTest()">
+                Start
+            </button>
+
+            <div id="speedResults" class="hidden">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="card bg-neutral-800 border border-neutral-700 shadow-md">
+                        <div class="card-body p-4 text-center">
+                            <p class="text-xs opacity-70">Download</p>
+                            <p id="resultDownload" class="text-3xl font-bold">0</p>
+                            <p class="opacity-50 text-sm">Mbps</p>
+                        </div>
+                    </div>
+
+                    <div class="card bg-neutral-800 border border-neutral-700 shadow-md">
+                        <div class="card-body p-4 text-center">
+                            <p class="text-xs opacity-70">Upload</p>
+                            <p id="resultUpload" class="text-3xl font-bold">0</p>
+                            <p class="opacity-50 text-sm">Mbps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+
+    <main class="w-full flex justify-center mt-3">
+        <div
+            class="w-[95%] max-w-[1200px] h-[520px] bg-neutral-950 rounded-xl border border-neutral-800 shadow-lg px-3 py-2">
+            <div id="chart" class="w-full h-full"></div>
+        </div>
+    </main>
 </body>
-
 </html>

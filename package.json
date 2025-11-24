@@ -33,13 +33,15 @@
     "type": "commonjs",
     "scripts": {
         "start": "electron .",
+        "dev": "electronmon .",
         "build": "electron-builder"
     },
     "dependencies": {
         "ping": "^0.4.4"
     },
     "devDependencies": {
+        "electron": "^33.0.0",
         "electron-builder": "^26.0.12",
-        "electron": "^33.0.0"
+        "electronmon": "^2.0.4"
     }
 }
