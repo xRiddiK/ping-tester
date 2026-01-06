@@ -15,6 +15,7 @@ const speedStartBtn = document.getElementById("speedStartBtn");
 const speedResults = document.getElementById("speedResults");
 const resultDownload = document.getElementById("resultDownload");
 const resultUpload = document.getElementById("resultUpload");
+const muteBtn = document.getElementById("muteBtn");
 
 let running = false;
 let pingIntervalId = null;
@@ -42,7 +43,7 @@ const chartOpts = {
         },
         {
             scale: "y",
-            stroke: "#0bf",
+            stroke: "rgba(30, 255, 0, 1)",
             grid: { stroke: "rgba(255,255,255,0.06)" },
             values: (u, vals) => vals.map(v => `${v} ms`),
         },
@@ -52,7 +53,7 @@ const chartOpts = {
         {
             label: "Ping (ms)",
             scale: "y",
-            stroke: "rgba(0,200,255,1)",
+            stroke: "rgba(30, 255, 0, 1)",
             width: 2,
         },
     ],
@@ -117,6 +118,13 @@ async function pingTick() {
             Math.round((loss / (pingHistory.length + loss)) * 100) + "%";
     }
 
+    var sound = new Howl({
+        src: ['beep.mp3'],
+        loop: false,
+        volume: 0.05,
+    });
+    sound.play();
+
     u.setData([xData, pingData]);
 }
 
@@ -125,10 +133,21 @@ startBtn.addEventListener("click", () => {
         running = true;
         startBtn.textContent = "Stop";
         pingIntervalId = setInterval(pingTick, 1000);
+        muteBtn.classList.remove("hidden");
     } else {
         running = false;
         startBtn.textContent = "Start";
         clearInterval(pingIntervalId);
+        muteBtn.classList.add("hidden");
+    }
+});
+
+muteBtn.addEventListener("click", () => {
+    Howler.mute(!Howler._muted);
+    if (Howler._muted) {
+        muteBtn.textContent = "Unmute";
+    } else {
+        muteBtn.textContent = "Mute";
     }
 });
 

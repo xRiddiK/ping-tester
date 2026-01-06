@@ -1,5 +1,7 @@
 {
     "name": "ping-monitor",
+    "description": "just a simple ping monitor + speedtest. build it cuz i was bored",
+    "author": "JXCS",
     "version": "2.1.0",
     "main": "main.js",
     "build": {
@@ -17,6 +19,7 @@
             "output": "dist"
         },
         "win": {
+            "icon": "assets/favicon.ico",
             "target": [
                 {
                     "target": "portable",
